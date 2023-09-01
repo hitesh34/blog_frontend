@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { axiosInstance } from '@/external/axiosapi';
 
-const CommentForm = ({ post, latestPostId }) => {
+const CommentForm = ({ post }) => {
   const [name, setName] = useState('');
   const [comment, setComment] = useState('');
 
@@ -16,14 +16,12 @@ const CommentForm = ({ post, latestPostId }) => {
     const data = {
       author: name,
       content: comment,
-      post: post.id, // Use the post ID from props
+      post: post.id,
     };
 
     try {
-      // Retrieve the CSRF token from the cookie
       const csrfToken = getCookie('csrftoken');
 
-      // Include the CSRF token in the request headers
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -31,12 +29,10 @@ const CommentForm = ({ post, latestPostId }) => {
         },
       };
 
-      // Send the comment data to the server
       const response = await axiosInstance.post('/api/comments/', data, config);
 
       if (response.status === 201) {
         console.log('Comment submitted successfully');
-        // You can trigger a refresh or update the comment list here
       } else {
         console.log('Error submitting comment');
       }
@@ -52,7 +48,6 @@ const CommentForm = ({ post, latestPostId }) => {
     setComment('');
   };
 
-  // Function to retrieve the value of a cookie by its name
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -60,20 +55,27 @@ const CommentForm = ({ post, latestPostId }) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="mt-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your Name"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
         />
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Write your comment here..."
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
         />
-        <button type="submit">Submit Comment</button>
+        <button
+          type="submit"
+          className="px-4 py-2 text-white bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600"
+        >
+          Submit Comment
+        </button>
       </form>
     </div>
   );
