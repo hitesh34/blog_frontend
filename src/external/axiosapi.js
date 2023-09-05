@@ -1,7 +1,7 @@
 // external/axiosApi.js
 import axios from 'axios';
 
-const baseURL = 'http://127.0.0.1:8000'; // Base URL of your Django backend
+const baseURL = 'https://squid-app-mqw69.ondigitalocean.app'; // Updated base URL for your DigitalOcean deployed backend
 
 const baseConfig = {
   baseURL: baseURL,
