@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -15,4 +14,18 @@ module.exports = {
     },
   },
   plugins: [],
-}
+  purge: {
+    content: [
+      './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+      './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+      './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    ],
+    safelist: [
+      'bg-blue-500',
+      'text-center',
+      'hover:opacity-100',
+      'lg:text-right',
+      // Add any other classes you want to keep here
+    ],
+  },
+};
