@@ -21,7 +21,7 @@ function BlogComponent() {
             month: 'long',
             day: 'numeric',
           }),
-          authorImageUrl: '/media/blog_images/authorlogo.jpg', 
+          authorImageUrl: '/media/blog_images/authorlogo.jpg', // Updated image path
         }));
         setPosts(postsArray);
         setTotalPages(response.data.count);
@@ -151,6 +151,7 @@ function BlogComponent() {
     return <CommentForm onSubmit={handleCommentSubmit} />;
   };
 
+ 
   return (
     <div className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -162,7 +163,7 @@ function BlogComponent() {
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {posts.map((post) => (
-            <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <article key={post.id} className="flex flex-col items-start justify-between">
               <div className="relative w-full">
                 <img
                   src={post.image_url || 'https://picsum.photos/200'}
@@ -185,36 +186,36 @@ function BlogComponent() {
                     </a>
                   )}
                 </div>
-                <div className="group relative center">
-                  <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600 center">
+                <div className="group relative">
+                  <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
                     <Link href={`/blog/${post.id}`}>
-                      <span className="absolute inset-0 center" />
+                      <span className="absolute inset-0" />
                       {post.title}
                     </Link>
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-gray-600 center">
+                  <p className="mt-2 text-sm leading-6 text-gray-600">
                     {post.subtitle}
                   </p>
                 </div>
                 <div className="relative mt-8 flex items-center gap-x-4">
-  {post.authorImageUrl ? (
-    <img src={post.authorImageUrl} alt="" className="h-10 w-10 rounded-full bg-gray-100" />
-  ) : (
-    <img src="/media/blog_images/authorlogo.jpg" alt="Default Avatar" className="h-10 w-10 rounded-full bg-gray-100" />
-  )}
-  <div className="text-sm leading-6">
-    {post.author ? (
-      <p className="font-semibold text-gray-900">
-        <a href={post.author.href}>
-          <span className="absolute inset-0" />
-          {post.author.name}
-        </a>
-      </p>
-    ) : (
-      <p className="text-gray-900">HomeOpen</p>
-    )}
-  </div>
-</div>
+                  {post.authorImageUrl ? (
+                    <img src={post.authorImageUrl} alt="" className="h-10 w-10 rounded-full bg-gray-100" />
+                  ) : (
+                    <img src="/media/blog_images/authorlogo.jpg" alt="Default Avatar" className="h-10 w-10 rounded-full bg-gray-100" />
+                  )}
+                  <div className="text-sm leading-6">
+                    {post.author ? (
+                      <p className="font-semibold text-gray-900">
+                        <a href={post.author.href}>
+                          <span className="absolute inset-0" />
+                          {post.author.name}
+                        </a>
+                      </p>
+                    ) : (
+                      <p className="text-gray-900">HomeOpen</p>
+                    )}
+                  </div>
+                </div>
                 <div className="mt-10 max-w-2xl">
                   {post.content_blocks && post.content_blocks.map((block) => (
                     <div key={block.id}>
@@ -263,4 +264,4 @@ function BlogComponent() {
   );
 }
 
-export default BlogComponent; 
+export default BlogComponent;
