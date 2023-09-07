@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '@/external/axiosapi';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import Image from 'next/image';
-import DataTable from './DataTable'; // Import the DataTable component
 
 function BlogComponent() {
   const router = useRouter();
@@ -16,7 +14,15 @@ function BlogComponent() {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get(`/api/blog-posts/?page=${currentPage}`);
-        const postsArray = response.data.results;
+        const postsArray = response.data.results.map((post) => ({
+          ...post,
+          publication_date: new Date(post.publication_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
+          authorImageUrl: '/media/blog_images/authorlogo.jpg', 
+        }));
         setPosts(postsArray);
         setTotalPages(response.data.count);
       } catch (error) {
@@ -24,23 +30,20 @@ function BlogComponent() {
       }
     };
     fetchData();
-
   }, [currentPage]);
-
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
-  
   const renderContentBlock = (block) => {
     if (!block.content_type) {
       console.error('Content Type is undefined for block:', block);
       return <p>Content Type is undefined</p>;
     }
-  
+
     const contentTypeString = `${block.content_type.app_label}.${block.content_type.model}`;
-  
+
     switch (contentTypeString.toLowerCase()) {
       case 'home.textblock':
         return renderTextBlock(block.content_object);
@@ -50,20 +53,20 @@ function BlogComponent() {
         return renderMapBlock(block.content_object);
       case 'home.datablock':
         return renderDataTableBlock(block.content_object);
-      case 'home.userblock': // Add this case for user block
+      case 'home.userblock':
         return renderUserBlock(block.content_object);
       case 'home.comment':
-        return renderCommentForm(block.content_object);  
-     
+        return renderCommentForm(block.content_object);
+
       default:
-        return null; // Or any other fallback component
+        return null;
     }
   };
-  
+
   const renderImageBlock = (contentObject) => {
     return (
       <div>
-          <img src={`/media/blog_images/${contentObject.image}`} alt={contentObject.caption} />
+        <img src={`/media/blog_images/${contentObject.image}`} alt={contentObject.caption} />
         <p>{contentObject.actual_content.caption}</p>
       </div>
     );
@@ -76,7 +79,6 @@ function BlogComponent() {
       </div>
     );
   };
-
 
   const renderDataTableBlock = (contentObject) => {
     return (
@@ -104,8 +106,6 @@ function BlogComponent() {
       </div>
     );
   };
-  
-
 
   const renderMapBlock = (contentObject) => {
     return (
@@ -114,22 +114,42 @@ function BlogComponent() {
       </div>
     );
   };
+
   const renderUserBlock = (contentObject) => {
+    console.log('Avatar filename:', contentObject.avatar); // Add this line for debugging
+  
     return (
-      <div>
-        {contentObject.name && <p>Name: {contentObject.name}</p>}
-        {contentObject.email && <p>Email: {contentObject.email}</p>}
-        {contentObject.avatar_url && (
-          <img src={contentObject.avatar_url} alt="Avatar" />
+      <div className="flex items-center gap-x-2">
+        {contentObject.avatar ? (
+          <img
+            src={`/media/blog_images/${contentObject.avatar}`}
+            alt="Avatar"
+            className="h-10 w-10 rounded-full bg-gray-100"
+          />
+        ) : (
+          <img
+            src="/media/blog_images/authorlogo.jpg"
+            alt="Default Avatar"
+            className="h-10 w-10 rounded-full bg-gray-100"
+          />
         )}
+        <div className="text-sm leading-6">
+          {contentObject.name && <p className="font-semibold text-gray-900">{contentObject.name}</p>}
+          {contentObject.email && (
+            <p className="text-gray-900">
+              <a href={contentObject.email}>{contentObject.email}</a>
+            </p>
+          )}
+        </div>
       </div>
     );
   };
+  
+  
 
   const renderCommentForm = () => {
     return <CommentForm onSubmit={handleCommentSubmit} />;
   };
-
 
   return (
     <div className="bg-white py-24 sm:py-32">
@@ -153,15 +173,15 @@ function BlogComponent() {
               </div>
               <div className="max-w-xl">
                 <div className="mt-8 flex items-center gap-x-4 text-xs">
-                  <time dateTime={post.pub_date} className="text-gray-500">
-                    {post.publication_date} {/* Display the publication date */}
+                  <time className="text-gray-500">
+                    {post.publication_date}
                   </time>
                   {post.category && post.category.href && (
                     <a
                       href={post.category.href}
                       className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
                     >
-                      {post.category} {/* Display the category */}
+                      {post.category}
                     </a>
                   )}
                 </div>
@@ -172,30 +192,29 @@ function BlogComponent() {
                       {post.title}
                     </Link>
                   </h3>
-                  {/* Add initial lines of blog post content here */}
                   <p className="mt-2 text-sm leading-6 text-gray-600 center">
-                    {post.subtitle} {/* Display the subtitle */}
+                    {post.subtitle}
                   </p>
                 </div>
                 <div className="relative mt-8 flex items-center gap-x-4">
-                  {post.author && post.author.imageUrl ? (
-                    <img src={post.author.imageUrl} alt="" className="h-10 w-10 rounded-full bg-gray-100" />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full bg-gray-100" />
-                  )}
-                  <div className="text-sm leading-6">
-                    {post.author ? (
-                      <p className="font-semibold text-gray-900">
-                        <a href={post.author.href}>
-                          <span className="absolute inset-0" />
-                          {post.author.name}
-                        </a>
-                      </p>
-                    ) : (
-                      <p className="text-gray-900">HomeOpen</p>
-                    )}
-                  </div>
-                </div>
+  {post.authorImageUrl ? (
+    <img src={post.authorImageUrl} alt="" className="h-10 w-10 rounded-full bg-gray-100" />
+  ) : (
+    <img src="/media/blog_images/authorlogo.jpg" alt="Default Avatar" className="h-10 w-10 rounded-full bg-gray-100" />
+  )}
+  <div className="text-sm leading-6">
+    {post.author ? (
+      <p className="font-semibold text-gray-900">
+        <a href={post.author.href}>
+          <span className="absolute inset-0" />
+          {post.author.name}
+        </a>
+      </p>
+    ) : (
+      <p className="text-gray-900">HomeOpen</p>
+    )}
+  </div>
+</div>
                 <div className="mt-10 max-w-2xl">
                   {post.content_blocks && post.content_blocks.map((block) => (
                     <div key={block.id}>
@@ -242,7 +261,6 @@ function BlogComponent() {
       </div>
     </div>
   );
-  
 }
 
-export default BlogComponent;
+export default BlogComponent; 
