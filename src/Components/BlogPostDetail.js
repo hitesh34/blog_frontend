@@ -5,7 +5,7 @@ import MarkdownRenderer from './MarkdownRenderer';
 
 function BlogPostDetail({ post }) {
   const [comments, setComments] = useState([]);
-  const [latestPostId, setLatestPostId] = useState(0); // Add this state
+  const [latestPostId, setLatestPostId] = useState(0);
 
   const fetchComments = async () => {
     try {
@@ -18,7 +18,7 @@ function BlogPostDetail({ post }) {
 
   useEffect(() => {
     fetchComments();
-    fetchLatestPostId(); // Fetch latestPostId
+    fetchLatestPostId();
   }, []);
 
   const fetchLatestPostId = async () => {
@@ -140,7 +140,6 @@ function BlogPostDetail({ post }) {
             );
           })}
 
-          {/* Render comments */}
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">Comments</h2>
             <ul className="space-y-4">
@@ -148,11 +147,18 @@ function BlogPostDetail({ post }) {
                 <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
                   <p>{comment.content}</p>
                   <p>Author: {comment.author}</p>
-                  {comment.is_approved === null && (
+                  {comment.is_approved === null ? (
                     <>
                       <button onClick={() => handleApproveComment(comment.id)}>Approve</button>
                       <button onClick={() => handleRejectComment(comment.id)}>Reject</button>
                     </>
+                  ) : (
+                    // Optionally, show an indication of approval or rejection
+                    comment.is_approved ? (
+                      <span>Approved</span>
+                    ) : (
+                      <span>Rejected</span>
+                    )
                   )}
                 </li>
               ))}
