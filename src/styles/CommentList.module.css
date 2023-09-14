@@ -1,0 +1,29 @@
+/* CommentList.module.css */
+
+.commentList {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .commentItem {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .commentButton {
+    margin-right: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .commentButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Add more styles as needed */
+  

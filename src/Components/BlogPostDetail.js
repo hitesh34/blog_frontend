@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import CommentForm from './CommentForm';
 import { axiosInstance } from '@/external/axiosapi';
 import MarkdownRenderer from './MarkdownRenderer';
+import Link from 'next/link';
+
 
 function BlogPostDetail({ post }) {
   const [comments, setComments] = useState([]);
@@ -140,34 +142,37 @@ function BlogPostDetail({ post }) {
             );
           })}
 
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">Comments</h2>
-            <ul className="space-y-4">
-              {comments.map((comment) => (
-                <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
-                  <p>{comment.content}</p>
-                  <p>Author: {comment.author}</p>
-                  {comment.is_approved === null ? (
-                    <>
-                      <button onClick={() => handleApproveComment(comment.id)}>Approve</button>
-                      <button onClick={() => handleRejectComment(comment.id)}>Reject</button>
-                    </>
+<div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Comments</h2>
+          <ul className="space-y-4">
+            {comments.map((comment) => (
+              <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
+                <p>{comment.content}</p>
+                <p>Author: {comment.author}</p>
+                {comment.is_approved === null ? (
+                  <>
+                    <button onClick={() => handleApproveComment(comment.id)}>Approve</button>
+                    <button onClick={() => handleRejectComment(comment.id)}>Reject</button>
+                  </>
+                ) : (
+                  // Optionally, show an indication of approval or rejection
+                  comment.is_approved ? (
+                    <span>Approved</span>
                   ) : (
-                    // Optionally, show an indication of approval or rejection
-                    comment.is_approved ? (
-                      <span>Approved</span>
-                    ) : (
-                      <span>Rejected</span>
-                    )
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+                    <span>Rejected</span>
+                  )
+                )}
+              </li>
+            ))}
+          </ul>
+<div className="mt-4">
+  <Link href={`/blog/${post.slug}/comments`}>View Comments</Link>
+</div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default BlogPostDetail;
