@@ -65,23 +65,23 @@ function CommentsPage() {
     try {
       // Make an API request to reject the comment
       await axiosInstance.post(`/api/comments/${commentId}/reject/`);
-
+  
       // Find the index of the rejected comment in the local state
       const commentIndex = comments.findIndex((comment) => comment.id === commentId);
-
+  
       if (commentIndex !== -1) {
         // Create a copy of the comments array
         const updatedComments = [...comments];
-
+  
         // Update the status of the rejected comment to "Rejected"
         updatedComments[commentIndex] = {
           ...updatedComments[commentIndex],
           is_approved: false,
         };
-
+  
         // Remove the rejected comment from the local state
         updatedComments.splice(commentIndex, 1);
-
+  
         // Update the local state to reflect the changes
         setComments(updatedComments);
       }
@@ -89,6 +89,7 @@ function CommentsPage() {
       console.error('Error rejecting comment:', error);
     }
   };
+  
 
   // Find the corresponding blog post for this comment
   const blogPost = blogPosts.find((post) => post.slug === slug);
