@@ -4,6 +4,28 @@ import { axiosInstance } from '@/external/axiosapi';
 import MarkdownRenderer from './MarkdownRenderer';
 import Link from 'next/link';
 
+// Create a new component to render individual comments
+function Comment({ comment, handleApproveComment, handleRejectComment }) {
+  return (
+    <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
+      <p>{comment.content}</p>
+      <p>Author: {comment.author}</p>
+      {comment.is_approved === null ? (
+        <>
+          <button onClick={() => handleApproveComment(comment.id)}>Approve</button>
+          <button onClick={() => handleRejectComment(comment.id)}>Reject</button>
+        </>
+      ) : (
+        // Optionally, show an indication of approval or rejection
+        comment.is_approved ? (
+          <span>Approved</span>
+        ) : (
+          <span>Rejected</span>
+        )
+      )}
+    </li>
+  );
+}
 
 function BlogPostDetail({ post }) {
   const [comments, setComments] = useState([]);
@@ -59,6 +81,9 @@ function BlogPostDetail({ post }) {
       console.error('Error rejecting comment:', error);
     }
   };
+
+  // Filter the comments to display only approved comments
+  const approvedComments = comments.filter((comment) => comment.is_approved === true);
 
   return (
     <div className="bg-white px-6 py-32 lg:px-8">
@@ -142,37 +167,27 @@ function BlogPostDetail({ post }) {
             );
           })}
 
-<div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Comments</h2>
-          <ul className="space-y-4">
-            {comments.map((comment) => (
-              <li key={comment.id} className="bg-gray-100 p-4 rounded-lg">
-                <p>{comment.content}</p>
-                <p>Author: {comment.author}</p>
-                {comment.is_approved === null ? (
-                  <>
-                    <button onClick={() => handleApproveComment(comment.id)}>Approve</button>
-                    <button onClick={() => handleRejectComment(comment.id)}>Reject</button>
-                  </>
-                ) : (
-                  // Optionally, show an indication of approval or rejection
-                  comment.is_approved ? (
-                    <span>Approved</span>
-                  ) : (
-                    <span>Rejected</span>
-                  )
-                )}
-              </li>
-            ))}
-          </ul>
-<div className="mt-4">
-  <Link href={`/blog/${post.slug}/comments`}>View Comments</Link>
-</div>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Approved Comments</h2>
+            <ul className="space-y-4">
+              {approvedComments.map((comment) => (
+                <Comment
+                  key={comment.id}
+                  comment={comment}
+                  handleApproveComment={handleApproveComment}
+                  handleRejectComment={handleRejectComment}
+                />
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-4">
+            <Link href={`/blog/${post.slug}/comments`}>View Comments</Link>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default BlogPostDetail;

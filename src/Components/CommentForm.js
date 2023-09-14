@@ -1,7 +1,8 @@
+// CommentForm.js
 import React, { useState } from 'react';
 import { axiosInstance } from '@/external/axiosapi';
 
-const CommentForm = ({ post }) => {
+const CommentForm = ({ post, setComments }) => {
   const [name, setName] = useState('');
   const [comment, setComment] = useState('');
 
@@ -16,7 +17,7 @@ const CommentForm = ({ post }) => {
     const data = {
       author: name,
       content: comment,
-      post: post.id,
+      post: post, // Use the post title from props
     };
 
     try {
@@ -33,6 +34,14 @@ const CommentForm = ({ post }) => {
 
       if (response.status === 201) {
         console.log('Comment submitted successfully');
+
+        // Update the local state to add the new comment with "Pending for Approval" status
+        const newComment = { ...response.data, is_approved: null };
+        setComments((prevComments) => [...prevComments, newComment]);
+
+        // Clear the form inputs
+        setName('');
+        setComment('');
       } else {
         console.log('Error submitting comment');
       }
@@ -43,9 +52,6 @@ const CommentForm = ({ post }) => {
         console.log('Error submitting comment:', error);
       }
     }
-
-    setName('');
-    setComment('');
   };
 
   const getCookie = (name) => {
